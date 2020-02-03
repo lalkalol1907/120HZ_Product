@@ -1,4 +1,4 @@
-from modules.function import *
+from TGBot.modules.function import *
 
 
 @bot.message_handler(commands=['start'])  # Тут все ок и работает

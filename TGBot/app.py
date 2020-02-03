@@ -6,8 +6,8 @@ from urllib import request
 from flask import *
 import telebot
 
-from config import webhook_url
-from modules.function import bot, MessageSender, CodeGen
+from TGBot.config import webhook_url
+from TGBot.modules.function import bot, MessageSender, CodeGen
 
 flask_app = Flask(__name__)
 

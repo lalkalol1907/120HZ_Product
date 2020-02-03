@@ -1,5 +1,5 @@
 from telebot import types
-from modules.getText import *
+from TGBot.modules.getText import *
 
 # Тексты
 AdminTexts = getText("admin")
@@ -23,9 +23,9 @@ class TGkeyboards(object):
 
     def __init__(self):
 
-        from modules.function import ActsDataBase
+        from TGBot.modules.function import ActsDataBase
         self.Acts = ActsDataBase()
-        from modules.function import MansDataBaseTG
+        from TGBot.modules.function import MansDataBaseTG
         self.Man = MansDataBaseTG()
 
 

@@ -2,12 +2,12 @@ from openpyxl import load_workbook
 from random import randint
 import telebot
 from telebot import types
-from config import *
+from TGBot.config import *
 import datetime
 import time
-from Telegram.keyboard import PupilTGkeyboards, AdminTGkeyboards, NonameTGKeyboards, backkbd
+from TGBot.Telegram.keyboard import PupilTGkeyboards, AdminTGkeyboards, NonameTGKeyboards, backkbd
 import pymysql
-from modules.getText import *
+from TGBot.modules.getText import *
 from threading import *
 
 # Аргументы подключения к бд
