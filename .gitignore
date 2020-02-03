@@ -2,3 +2,4 @@
 *.properties
 /venv/
 /TGBot/.idea/
+/target/classes/
