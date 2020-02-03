@@ -6,3 +6,5 @@
 /.vs/
 /venvp/
 /.idea/
+.DS_STORE
+__pycache__
