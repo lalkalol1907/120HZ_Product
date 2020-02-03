@@ -5,34 +5,40 @@ import java.io.FileInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Properties;
 
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import static DataBase.JDBC.getConnection;
 
 
 public class CodeDostavatel{
 
-    public static int coded() throws IOException {
+    public static int coded() throws IOException, SQLException {
     int res = 0;
-    Properties prop = new Properties();
-    prop.load(new FileInputStream("/resources/vkconfig.properties"));
-    String codepath = prop.getProperty("codepath");
-        try {
-            File f = new File(codepath);
-            FileInputStream ios = new FileInputStream(f);
-            XSSFWorkbook workbook = new XSSFWorkbook(ios);
-            XSSFSheet sheet = workbook.getSheetAt(0);
-            XSSFRow row = sheet.getRow(0);
 
-            res = (int) Math.round(row.getCell(0).getNumericCellValue());
+    String Sql = "SELECT * FROM CodeList";
 
-            ios.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return res;
+
+    Connection conn = null;
+    try{
+        conn = getConnection();
+    } catch (Exception e) {
+        e.printStackTrace();
     }
 
+    assert conn != null;
+    Statement statement = conn.createStatement();
+    ResultSet rs = statement.executeQuery(Sql);
+
+    while (rs.next()){
+
+    }
+
+
+    return res;
+    }
 }
