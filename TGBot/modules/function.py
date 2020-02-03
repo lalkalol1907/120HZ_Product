@@ -28,7 +28,7 @@ Unknown_command = OthersTexts.gettext("Unknown command")
 
 def start_kbd():
     """
-    :param start_kbd() - клавиатура с кнопкой /start
+    клавиатура с кнопкой /start
     """
     st = types.ReplyKeyboardMarkup()
     row = types.KeyboardButton("/start")
