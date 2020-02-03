@@ -17,10 +17,18 @@ import static DataBase.JDBC.getConnection;
 
 public class CodeDostavatel{
 
+    private static int GetLastId(){
+        int lastid = 0;
+
+
+
+        return lastid;
+    }
+
     public static int coded() throws IOException, SQLException {
     int res = 0;
 
-    String Sql = "SELECT * FROM CodeList";
+    String Sql = "SELECT * FROM codetable";
 
 
     Connection conn = null;
@@ -35,6 +43,8 @@ public class CodeDostavatel{
     ResultSet rs = statement.executeQuery(Sql);
 
     while (rs.next()){
+
+
 
     }
 

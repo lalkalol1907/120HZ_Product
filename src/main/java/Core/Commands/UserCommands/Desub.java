@@ -2,6 +2,7 @@ package Core.Commands.UserCommands;
 
 import Core.Command;
 import Keyboards.DesubKbd;
+import Keyboards.Nonamekbd;
 import Keyboards.PupilKeyboard;
 import VK.VKManager;
 import com.vk.api.sdk.objects.messages.Message;
@@ -25,7 +26,7 @@ public class Desub extends Command {
             new VKManager().sendMessage("Выбери активность, от которой хочешь отписаться", message.getUserId(), DesubKbd.Desubkbd(message.getUserId())); //
         }
         else {
-            new VKManager().sendMessage("Неизвестная команда", message.getUserId(), PupilKeyboard.PupilKbd());
+            new VKManager().sendMessage("Неизвестная команда", message.getUserId(), Nonamekbd.NonameKbd());
         }
     }
 }

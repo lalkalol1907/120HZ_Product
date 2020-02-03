@@ -7,6 +7,7 @@ import Core.Commands.UserCommands.Subscribe;
 import Functions.CodeDostavatel;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashSet;
 
 public class CommandManager {
@@ -22,7 +23,7 @@ public class CommandManager {
         commands.add(new Back("Назад"));
         try {
             commands.add(new Code(Integer.toString(CodeDostavatel.coded())));
-        } catch (IOException e) {
+        } catch (IOException | SQLException e) {
             e.printStackTrace();
         }
     }

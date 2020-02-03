@@ -4,7 +4,6 @@ import telebot
 from telebot import types
 from TGBot.config import *
 import datetime
-import time
 from TGBot.Telegram.keyboard import PupilTGkeyboards, AdminTGkeyboards, NonameTGKeyboards, backkbd
 import pymysql
 from TGBot.modules.getText import *
@@ -537,7 +536,7 @@ class CodeGen:
         :return:
         """
         con = pymysql.connect(**conargs)
-        sql = "SELECT * FROM CodeList"
+        sql = "SELECT * FROM CodeTable"
         lastId = 0
         with con:
             cur = con.cursor()

@@ -1,2 +1,4 @@
 *.ini
 *.properties
+/venv/
+/TGBot/.idea/

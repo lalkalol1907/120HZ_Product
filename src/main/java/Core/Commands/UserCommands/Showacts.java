@@ -1,5 +1,6 @@
 package Core.Commands.UserCommands;
 
+import Keyboards.Nonamekbd;
 import Keyboards.PupilKeyboard;
 import VK.VKManager;
 import Core.Command;
@@ -39,7 +40,7 @@ public class Showacts extends Command{
             }//
         }
         else {
-            new VKManager().sendMessage("Неизвестная команда", message.getUserId(), PupilKeyboard.PupilKbd());
+            new VKManager().sendMessage("Неизвестная команда", message.getUserId(), Nonamekbd.NonameKbd());
         }
     }
 }

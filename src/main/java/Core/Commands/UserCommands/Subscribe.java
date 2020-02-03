@@ -1,6 +1,7 @@
 package Core.Commands.UserCommands;
 
 import Core.Command;
+import Keyboards.Nonamekbd;
 import Keyboards.Subkbd;
 import VK.VKManager;
 import com.vk.api.sdk.objects.messages.Message;
@@ -22,7 +23,7 @@ public class Subscribe extends Command {
             new VKManager().sendMessage("Нажми на активность, на которую хочешь подписаться:", message.getUserId(),Subkbd.Subkbd()); //
         }
         else {
-            new VKManager().sendMessage("Неизвестная команда", message.getUserId(), Subkbd.Subkbd());
+            new VKManager().sendMessage("Неизвестная команда", message.getUserId(), Nonamekbd.NonameKbd());
         }
     }
 }
