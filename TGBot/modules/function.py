@@ -532,10 +532,6 @@ class CodeGen:
     """
 
     def __init__(self):
-        self.path = './Data/code.xlsx'
-        self.codewb = load_workbook(self.path)
-        self.codeSearch = self.codewb.active
-        self.maxrow = 1
         self.now = datetime.datetime.now()
 
     def codegen(self):
@@ -543,10 +539,11 @@ class CodeGen:
         Генерирует рандомной 5-ти значное число, которое является кодом и заносит его в таблицу
         :return:
         """
+        con = pymysql.connect(**conargs)
         code = randint(10000, 99999)
-        self.codeSearch.cell(row=self.codeSearch.max_row, column=2).value = self.now.day
-        self.codeSearch.cell(row=self.codeSearch.max_row, column=1).value = code
-        self.codewb.save(self.path)
+        with con.cursor() as cur:
+            cur.execute(f"INSERT INTO CodeTable VALUES('{code}', '{self.now.day}')")
+        con.close()
 
     def getcode(self):
         """
