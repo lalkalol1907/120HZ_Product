@@ -17,10 +17,21 @@ import static DataBase.JDBC.getConnection;
 
 public class CodeDostavatel{
 
-    private static int GetLastId(){
+    private static int GetLastId()throws SQLException{
         int lastid = 0;
 
+        String Sql = "SELECT * FROM CodeTable";
 
+        Connection conn = null;
+        try{
+            conn = getConnection();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        assert conn != null;
+        Statement statement = conn.createStatement();
+        ResultSet rs = statement.executeQuery(Sql);
 
         return lastid;
     }
