@@ -478,31 +478,23 @@ class SendMessage:
 class CodeCheck:
     """
     Класс проверяет код при регистрации человека
+
+    Структура таблицы:
+        0: id (номер кода, необходим для проверки последнего)
+        1: code (сам код)
+        2: day (день в который был создан)
     """
-    @staticmethod
-    def maxrowSearch(ws):
-        if ws.max_row == 1:
-            if ws.cell(row=1, column=1).value == "" or ws.cell(row=1, column=1).value == None:
-                return 1
-            else:
-                return 2
-        else:
-            return ws.max_row + 1
 
     def __init__(self):
-        self.path = './Data/code.xlsx'
-        self.codewb = load_workbook(self.path)
-        self.codeSearch = self.codewb.active
-        self.maxrow = self.maxrowSearch(self.codeSearch)
         self.MainDB = MansDataBaseTG()
+
 
     def code(self):
         """
         Достает правильный код из таблицы
         :return:
         """
-        value = self.codeSearch.cell(row=self.codeSearch.max_row, column=1).value
-        return str(value)
+        return CodeGen().getcode()
 
     def checkcode(self, message):
         """
@@ -529,10 +521,33 @@ class CodeGen:
     """
     Класс отвечает за обновление кода каждый день
 
+    Структура таблицы:
+        0: id (номер кода, необходим для проверки последнего)
+        1: code (сам код)
+        2: day (день в который был создан)
     """
 
     def __init__(self):
         self.now = datetime.datetime.now()
+
+    @staticmethod
+    def GetLastCodeId():
+        """
+        Получает id последнего кода
+        :return:
+        """
+        con = pymysql.connect(**conargs)
+        sql = "SELECT * FROM CodeList"
+        lastId = 0
+        with con:
+            cur = con.cursor()
+            cur.execute(sql)
+            rows = cur.fetchall()
+            for row in rows:
+                lastId = row[0]
+
+        con.close()
+        return lastId
 
     def codegen(self):
         """
@@ -542,7 +557,7 @@ class CodeGen:
         con = pymysql.connect(**conargs)
         code = randint(10000, 99999)
         with con.cursor() as cur:
-            cur.execute(f"INSERT INTO CodeTable VALUES('{code}', '{self.now.day}')")
+            cur.execute(f"INSERT INTO CodeTable VALUES('{self.GetLastCodeId() + 1}', '{code}', '{self.now.day}')")
         con.close()
 
     def getcode(self):
@@ -550,7 +565,14 @@ class CodeGen:
         получает код из БД
         :return:
         """
-        return self.codeSearch.cell(row=self.codeSearch.max_row, column=1).value
+        con = pymysql.connect(**conargs)
+        with con.cursor() as cur:
+            cur.execute(f"SELECT * FROM CodeTable WHERE id = '{self.GetLastCodeId()}'")
+            rows = cur.fetchall()
+            for row in rows:
+                code = row[1]
+        con.close()
+        return code
 
     def checkdate(self):
         """
@@ -558,8 +580,16 @@ class CodeGen:
         Если отличается - запускает codegen()
         :return:
         """
+        con = pymysql.connect(**conargs)
+        with con.cursor() as cur:
+            cur.execute(f"SELECT * FROM CodeTable WHERE id = '{self.GetLastCodeId()}'")
+            rows = cur.fetchall()
+            for row in rows:
+                last_day = row[2]
+        con.close()
+
         day = self.now.day
-        if str(self.codeSearch.cell(row=self.codeSearch.max_row, column=2).value) != str(day):
+        if str(last_day) != str(day):
             self.codegen()
         else:
             pass
