@@ -6,3 +6,4 @@
 /.vs/
 /.idea/
 /Compiled/
+__pycache__
