@@ -4,6 +4,12 @@
 /TGBot/.idea/
 /target/classes/
 /.vs/
+<<<<<<< HEAD
 /.idea/
 /Compiled/
+=======
+/venvp/
+/.idea/
+.DS_STORE
 __pycache__
+>>>>>>> 9d9580cdceeb83ada8d242d42161e9ec1eac5a90
