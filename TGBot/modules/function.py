@@ -632,8 +632,3 @@ class MessageSender:
                         except:
                             pass
         con.close()
-
-"""
-
-
-"""
