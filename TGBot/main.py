@@ -1,3 +1,5 @@
+import time
+
 from TGBot.modules.function import *
 
 
@@ -171,3 +173,13 @@ def admin_f(message, Man):
 
         else:
             bot.send_message(Man.ID, text=Unknown_command, reply_markup=adminkbd.admin_k())
+
+if __name__ == '__main__':
+    bot.polling()
+
+    while True:
+        Thread(target=lambda: CodeGen().checkdate()).start()
+
+        Thread(target=lambda: MessageSender().start()).start()
+
+        time.sleep(5)
