@@ -13,3 +13,9 @@
 .DS_STORE
 __pycache__
 >>>>>>> 9d9580cdceeb83ada8d242d42161e9ec1eac5a90
+.classpath
+.factorypath
+.project
+.settings/org.eclipse.jdt.apt.core.prefs
+.settings/org.eclipse.jdt.core.prefs
+*.prefs
