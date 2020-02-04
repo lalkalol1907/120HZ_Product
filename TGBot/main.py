@@ -175,7 +175,7 @@ def admin_f(message, Man):
             bot.send_message(Man.ID, text=Unknown_command, reply_markup=adminkbd.admin_k())
 
 if __name__ == '__main__':
-    bot.polling()
+    Thread(target = lambda: bot.polling()).start()
 
     while True:
         Thread(target=lambda: CodeGen().checkdate()).start()
