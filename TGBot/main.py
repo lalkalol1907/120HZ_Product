@@ -175,11 +175,10 @@ def admin_f(message, Man):
             bot.send_message(Man.ID, text=Unknown_command, reply_markup=adminkbd.admin_k())
 
 if __name__ == '__main__':
-    Thread(target = lambda: bot.polling()).start()
+    Thread(target = lambda: bot.infinity_polling(True)).start()
 
     while True:
         Thread(target=lambda: CodeGen().checkdate()).start()
-
         Thread(target=lambda: MessageSender().start()).start()
 
         time.sleep(5)
