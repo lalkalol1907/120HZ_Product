@@ -12,9 +12,9 @@ from threading import *
 # Аргументы подключения к бд
 conargs = {
     'host': 'localhost',
-    'user': 'lalkalol_crochz',
-    'password': 'python',
-    'db': 'lalkalol_crochz'
+    'user': 'root',
+    'password': '',
+    'db': 'CrocProduct'
 }
 
 # Тексты
