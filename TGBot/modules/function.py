@@ -12,9 +12,10 @@ from threading import *
 # Аргументы подключения к бд
 conargs = {
     'host': 'localhost',
-    'user': 'root',
-    'password': '',
-    'db': 'CrocProduct'
+    'user': 'lalkalol',
+    'password': 'lalkalol',
+    'db': 'CrocProduct',
+    'charset': 'utf8mb4'
 }
 
 # Тексты
@@ -343,10 +344,10 @@ class ActsDataBase:
             bot.send_message(message.from_user.id, text=OthersTexts.gettext('back'), reply_markup=adminkbd)
         else:
             name = message.text
-            sql = f"INSERT INTO Acts VALUES(%s)"
+            sql = f"INSERT INTO Acts VALUES('{name}')"
             with con:
                 cur = con.cursor()
-                cur.execute(sql, name)
+                cur.execute(sql)
 
             con.close()
             bot.send_message(message.from_user.id, f"Активность «{name}» добавлена", reply_markup=adminkbd)
@@ -557,6 +558,7 @@ class CodeGen:
         code = randint(10000, 99999)
         with con.cursor() as cur:
             cur.execute(f"INSERT INTO CodeTable VALUES('{self.GetLastCodeId() + 1}', '{code}', '{self.now.day}')")
+            con.commit()
         con.close()
 
     def getcode(self):
@@ -581,7 +583,7 @@ class CodeGen:
         """
         con = pymysql.connect(**conargs)
         with con.cursor() as cur:
-            cur.execute(f"SELECT * FROM CodeTable WHERE id = '{self.GetLastCodeId()}'")
+            cur.execute(f"SELECT * FROM CodeTable WHERE id = '{int(self.GetLastCodeId())}'")
             rows = cur.fetchall()
             for row in rows:
                 last_day = row[2]
