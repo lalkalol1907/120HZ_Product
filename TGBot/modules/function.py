@@ -140,7 +140,7 @@ class MansDataBaseTG(MansDataBase):
                     cur.execute(f"SELECT * FROM {Acts[i].replace(' ', '_')}")
                     rows = cur.fetchall()
                     for row in rows:
-                        temparr.append(row[0])
+                        temparr.append(int(row[0]))
                     if int(ID) in temparr:
                         actsArray.append(Acts[i])
                     con.commit()
