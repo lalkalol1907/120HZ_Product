@@ -137,7 +137,7 @@ class MansDataBaseTG(MansDataBase):
             if Acts:
                 for i in range(0, len(Acts)):
                     temparr = []
-                    cur.execute(f"SELECT * FROM {Acts[i].replace(' ', '_')} WHERE TgId = %s", self.ID)
+                    cur.execute(f"SELECT * FROM {Acts[i].replace(' ', '_')}")
                     rows = cur.fetchall()
                     for row in rows:
                         temparr.append(row[0])
