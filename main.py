@@ -156,18 +156,23 @@ def admin_f(message, Man):
             bot.register_next_step_handler(message, Acts.add_act)
 
         elif message.text == AdminTexts.gettext("Удаление активности"):  # Работает
-            bot.send_message(Man.ID, "Выберите активность, которую хотите удалить:", reply_markup=del_act_kbd)
-            bot.register_next_step_handler(message, Acts.del_act)
+            try:
+                if not Acts.getallacts():
+                    bot.send_message(Man.ID, "Активностей нет!", reply_markup=adminkbd.admin_k())
+                else:
+                    bot.send_message(Man.ID, "Выберите активность, которую хотите удалить:", reply_markup=del_act_kbd)
+                    bot.register_next_step_handler(message, Acts.del_act)
+            except TypeError:
+                bot.send_message(Man.ID, "Активностей нет!",reply_markup=adminkbd.admin_k())
 
         elif message.text == AdminTexts.gettext("Просмотр активностей"):  # С багом, но работает
             try:
-                a = []
-                if Acts.getallacts() == a:
-                    bot.send_message(Man.ID, "Активностей нет!")
+                if not Acts.getallacts():
+                    bot.send_message(Man.ID, "Активностей нет!",reply_markup=adminkbd.admin_k())
                 else:
                     bot.send_message(Man.ID, '\n'.join(Acts.getallacts()), reply_markup=adminkbd.admin_k())
             except TypeError:
-                bot.send_message(Man.ID, "Активностей нет!")
+                bbot.send_message(Man.ID, "Активностей нет!",reply_markup=adminkbd.admin_k())
 
         elif message.text == AdminTexts.gettext("Отправка сообщения"):  # Работает
             bot.send_message(Man.ID, "Какой группе вы хотите отправить сообщение?:", reply_markup=sendkbd)

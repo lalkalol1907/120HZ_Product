@@ -372,10 +372,6 @@ class ActsDataBase:
         if message.text == "Назад":
             bot.send_message(message.from_user.id, text=OthersTexts.gettext('back'), reply_markup=adminkbd)
 
-        elif not self.getallacts():
-            bot.send_message(message.from_user.id, f"Активностей нет", reply_markup=adminkbd)
-            return 0
-
         elif message.text in self.getallacts():
             name = message.text
             sql = f"DELETE FROM Acts WHERE name = %s"
