@@ -205,8 +205,7 @@ class MansDataBaseTG(MansDataBase):
                 with con:
                     cur = con.cursor()
                     self.VkId = self.getVkId(self.ID)
-                    if self.VkId == "Не указано":
-                        self.VkId = ""
+
                     sql = f"INSERT INTO {activ.replace(' ', '_')} VALUES(%s, %s)"
 
                     sqlt = [int(self.ID), self.VkId]
@@ -232,8 +231,6 @@ class MansDataBaseTG(MansDataBase):
             self.acts = self.GetUserActs(self.ID)
 
             self.VkId = self.getVkId(self.ID)
-            if self.VkId == "Не указано":
-                self.VkId = ""
 
             if activ == "Отписаться от всех активностей":
                 pass
