@@ -529,13 +529,16 @@ class CodeCheck:
         if message.text == "Назад":
             bot.send_message(message.from_user.id, text=OthersTexts.gettext('back'), reply_markup=nonamekbd)
         else:
-            inputCode = message.text
-            Man = MansDataBaseTG()
+            try:
+                inputCode = int(message.text)
+                Man = MansDataBaseTG()
 
-            Man.ID = message.from_user.id
-            if inputCode == self.code():
-                self.MainDB.todb(Man.ID)
-            else:
+                Man.ID = message.from_user.id
+                if inputCode == self.code():
+                    self.MainDB.todb(Man.ID)
+                else:
+                    bot.send_message(Man.ID, text="Ты ввел неверный код!", reply_markup=nonamekbd)
+            except TypeError:
                 bot.send_message(Man.ID, text="Ты ввел неверный код!", reply_markup=nonamekbd)
 
 

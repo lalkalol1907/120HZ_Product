@@ -21,10 +21,10 @@ public class MessageSender extends Thread {
     private static ArrayList<Integer> GetVks(String act) throws SQLException {
         String Sql = "";
         if (act.equals("Всем")){
-            Sql = "SELECT VkId FROM MainTableV1";
+            Sql = "SELECT VkId FROM MainTable";
         }
         else {
-            Sql = "SELECT VkId FROM MainTableV1 WHERE acts = '" + act + "'";
+            Sql = "SELECT VkId FROM MainTable WHERE acts = '" + act + "'";
         }
         ArrayList<Integer> res = new ArrayList<>();
 
