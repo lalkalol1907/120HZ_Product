@@ -135,7 +135,7 @@ class MansDataBaseTG(MansDataBase):
             cur = con.cursor()
             Acts = ActsDataBase().getallacts()
             if Acts:
-                for i in len(Acts):
+                for i in range(0, len(Acts)):
                     temparr = []
                     cur.execute(f"SELECT * FROM {Acts[i].replace(' ', '_')} WHERE TgId = %s", self.ID)
                     rows = cur.fetchall()
@@ -255,7 +255,7 @@ class MansDataBaseTG(MansDataBase):
                     try:
                         Acts = ActsDataBase().getallacts()
                         if Acts:
-                            for i in len(Acts):
+                            for i in range(0, len(Acts)):
                                 cur.execute(f"DELETE FROM {Acts[i].replace(' ', '_')} WHERE TgId = %s", self.ID)
                                 con.commit()
                     except:
@@ -288,7 +288,7 @@ class MansDataBaseTG(MansDataBase):
                     con.commit()
                     Acts = ActsDataBase().getallacts()
                     if Acts:
-                        for i in len(Acts):
+                        for i in range(0, len(Acts)):
                             cur.execute(f"UPDATE {Acts[i].replace(' ', '_')} SET VkId = %s WHERE TgId = %s", sqlt)
                             con.commit()
 
@@ -371,6 +371,11 @@ class ActsDataBase:
         """
         if message.text == "Назад":
             bot.send_message(message.from_user.id, text=OthersTexts.gettext('back'), reply_markup=adminkbd)
+
+        elif not self.getallacts():
+            bot.send_message(message.from_user.id, f"Активностей нет", reply_markup=adminkbd)
+            return 0
+
         elif message.text in self.getallacts():
             name = message.text
             sql = f"DELETE FROM Acts WHERE name = %s"
@@ -430,7 +435,7 @@ class SendMessage:
             else:
                 Acts = ActsDataBase().getallacts()
                 if Acts:
-                    for i in len(Acts):
+                    for i in range(0, len(Acts)):
                         cur.execute(f"SELECT TgId FROM {Acts[i].replace(' ', '_')}")
                         rows = cur.fetchall()
                         for row in rows:
