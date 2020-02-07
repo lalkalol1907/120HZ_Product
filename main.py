@@ -44,7 +44,8 @@ def text(message):
     if Man.man == "noname":
         nn_f(message, Man)
     else:
-        Man.acts = Man.GetUserActs(Man.ID)
+        if Man.man != "admin":
+            Man.acts = Man.GetUserActs(Man.ID)
         Man.VkId = Man.getVkId(Man.ID)
 
 
