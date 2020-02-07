@@ -47,6 +47,7 @@ def text(message):
         Man.acts = Man.GetUserActs(Man.ID)
         Man.VkId = Man.getVkId(Man.ID)
 
+
         if Man.man == "admin":
             admin_f(message, Man)
         elif Man.man == "pupil":
@@ -113,8 +114,11 @@ def pupil_f(message, Man):
                 bot.send_message(Man.ID, PupilTexts.gettext("Активностей нет"))
 
         elif message.text == PupilTexts.gettext("Изменение данных"):
-            bot.send_message(Man.ID, text=f'Твой ВК: {Man.VkId}\n Введи ID, который выдал бот ВК:',
-                             reply_markup=backkbd())
+            if Man.VkId == 0:
+                bot.send_message(Man.ID, text="Твой ВК: Не указан\n Введи ID, который выдал бот ВК:", reply_markup=backkbd())
+            else:
+                bot.send_message(Man.ID, text=f'Твой ВК: {Man.VkId}\n Введи ID, который выдал бот ВК:', reply_markup=backkbd())
+
             bot.register_next_step_handler(message, Man.changeVK)
         else:
             bot.send_message(Man.ID, text=Unknown_command, reply_markup=pupilkbd.p_k())
