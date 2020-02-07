@@ -172,7 +172,7 @@ def admin_f(message, Man):
                 else:
                     bot.send_message(Man.ID, '\n'.join(Acts.getallacts()), reply_markup=adminkbd.admin_k())
             except TypeError:
-                bbot.send_message(Man.ID, "Активностей нет!",reply_markup=adminkbd.admin_k())
+                bot.send_message(Man.ID, "Активностей нет!",reply_markup=adminkbd.admin_k())
 
         elif message.text == AdminTexts.gettext("Отправка сообщения"):  # Работает
             bot.send_message(Man.ID, "Какой группе вы хотите отправить сообщение?:", reply_markup=sendkbd)
