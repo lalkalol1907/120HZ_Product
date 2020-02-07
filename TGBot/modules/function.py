@@ -38,7 +38,6 @@ def start_kbd():
 
 bot = telebot.TeleBot(f'{TG_TOKEN}')
 
-
 adminkbd = AdminTGkeyboards.admin_k()
 nonamekbd = NonameTGKeyboards.n_k()
 pupilkbd = PupilTGkeyboards.p_k()
@@ -71,21 +70,6 @@ class MansDataBaseTG(MansDataBase):
     База данных пользователей
     """
 
-    def delActs(self, name):
-        """
-        Удаляет активности у людей, подписанных на удаляемую активность
-        :param name:
-        :return:
-        """
-        con = pymysql.connect(**conargs)
-
-        sql = f"UPDATE MainTableV1 SET acts = '' WHERE acts = %s"
-
-        with con:
-            cur = con.cursor()
-            cur.execute(sql, name)
-        con.close()
-
     def todb(self, id):
         """
         Добавляет пользователя в базу данных
@@ -95,7 +79,7 @@ class MansDataBaseTG(MansDataBase):
         con = pymysql.connect(**conargs)
 
         self.ID = id
-        sql = f"INSERT INTO MainTableV1 VALUES(%s, 'pupil','','')"
+        sql = f"INSERT INTO MainTable VALUES(%s,'0')"
         with con:
             cur = con.cursor()
             cur.execute(sql, self.ID)
@@ -112,22 +96,30 @@ class MansDataBaseTG(MansDataBase):
 
         con = pymysql.connect(**conargs)
 
-        IdArray = []
-        ManArray = []
-        status = "noname"
-        sql = f"SELECT TgId, Man FROM MainTableV1 WHERE TgId = %s"
+        PupilArr = []
+        AdminArr = []
+
+        sql = f"SELECT * FROM MainTable"
+
         with con:
             cur = con.cursor()
-            cur.execute(sql, ID)
+            cur.execute(sql)
             rows = cur.fetchall()
             for row in rows:
-                TgId, Man = row
-                IdArray.append(TgId)
-                ManArray.append(Man)
-        for i in range(0, len(IdArray)):
-            status = ManArray[i]
-        con.close()
-        return status
+                PupilArr.append(int(row[0]))
+            con.commit()
+            sql = f"SELECT * FROM AdminTable"
+            cur.execute(sql)
+            rows = cur.fetchall()
+            for row in rows:
+                AdminArr.append(int(row[0]))
+
+        if int(ID) in PupilArr:
+            return "pupil"
+        elif int(ID) in AdminArr:
+            return "admin"
+        else:
+            return "noname"
 
     def GetUserActs(self, ID):
         """
@@ -138,21 +130,26 @@ class MansDataBaseTG(MansDataBase):
         con = pymysql.connect(**conargs)
 
         actsArray = []
-        sql = f"SELECT acts FROM MainTableV1 WHERE TgId = %s"
+
         with con:
             cur = con.cursor()
-            cur.execute(sql, int(ID))
-            rows = cur.fetchall()
-            for row in rows:
-                acts = row[0]
-                actsArray.append(acts)
+            Acts = ActsDataBase().getallacts()
+            if Acts:
+                for i in len(Acts):
+                    temparr = []
+                    cur.execute(f"SELECT * FROM {Acts[i].replace(' ', '_')} WHERE TgId = %s", self.ID)
+                    rows = cur.fetchall()
+                    for row in rows:
+                        temparr.append(row[0])
+                    if int(ID) in temparr:
+                        actsArray.append(Acts[i])
+                    con.commit()
         con.close()
-
         return self.nonone(actsArray)
 
     def getVkId(self, ID):
         """
-        Возвращает ВК ID человека, если оно отсутствует возвращает 'Не указано'
+        Возвращает ВК ID человека, если оно отсутствует возвращает '0'
 
         :param ID:
         :return:
@@ -161,7 +158,7 @@ class MansDataBaseTG(MansDataBase):
         con = pymysql.connect(**conargs)
 
         VkId_status = ""
-        sql = f"SELECT VkId FROM MainTableV1 WHERE TgId = %s"
+        sql = f"SELECT VkId FROM MainTable WHERE TgId = %s"
         with con:
             cur = con.cursor()
             cur.execute(sql, int(ID))
@@ -171,10 +168,10 @@ class MansDataBaseTG(MansDataBase):
 
         con.close()
 
-        if VkId_status != 0:
-            return VkId_status
-        else:
-            return "Не указано"
+        if VkId_status is None or VkId_status == "":
+            VkId_status = 0
+
+        return VkId_status
 
     def subscribe(self, message):  # Подписка на активность
         """
@@ -187,7 +184,6 @@ class MansDataBaseTG(MansDataBase):
         if message.text == "Назад":
             bot.send_message(message.from_user.id, text=OthersTexts.gettext('back'), reply_markup=pupilkbd)
         else:
-
             id = message.from_user.id
             useracts = self.GetUserActs(id)
             c = True
@@ -211,9 +207,9 @@ class MansDataBaseTG(MansDataBase):
                     self.VkId = self.getVkId(self.ID)
                     if self.VkId == "Не указано":
                         self.VkId = ""
-                    sql = f"INSERT INTO MainTableV1 VALUES(%s, 'pupil' ,%s , %s)"
+                    sql = f"INSERT INTO {activ.replace(' ', '_')} VALUES(%s, %s)"
 
-                    sqlt = [int(self.ID), activ, self.VkId]
+                    sqlt = [int(self.ID), self.VkId]
 
                     cur.execute(sql, sqlt)
 
@@ -240,27 +236,34 @@ class MansDataBaseTG(MansDataBase):
                 self.VkId = ""
 
             if activ == "Отписаться от всех активностей":
-                sql = f"DELETE FROM MainTableV1 WHERE TgId = %s"
-                sqlt = self.ID
+                pass
             elif activ in self.acts:
-                sql = f"DELETE FROM MainTableV1 WHERE TgId = %s AND acts = %s"
-                sqlt = [self.ID, activ]
+                sql = f"DELETE FROM {activ.replace(' ', '_')} WHERE TgId = %s"
             else:
-                bot.send_message(self.ID, "Ошибка! Ты не подписан на активность «{activ}»", reply_markup=pupilkbd)
+                bot.send_message(self.ID, f"Ошибка! Ты не подписан на активность «{activ}»", reply_markup=pupilkbd)
                 return 0
 
             con = pymysql.connect(**conargs)
 
             with con:
                 cur = con.cursor()
-                cur.execute(sql, sqlt)
-                if self.identy(self.ID) == "noname":
-                    sql = f"INSERT INTO MainTableV1 VALUES(%s, 'pupil','', %s)"
-                    sqlt = [self.ID, self.getVkId(self.ID)]
-                    cur.execute(sql, sqlt)
                 if activ != "Отписаться от всех активностей":
+                    try:
+                        cur.execute(sql, self.ID)
+                    except:
+                        pass
                     bot.send_message(self.ID, f"Ты отписался от активности «{activ}»", reply_markup=pupilkbd)
+
                 else:
+                    try:
+                        Acts = ActsDataBase().getallacts()
+                        if Acts:
+                            for i in len(Acts):
+                                cur.execute(f"DELETE FROM {Acts[i].replace(' ', '_')} WHERE TgId = %s", self.ID)
+                                con.commit()
+                    except:
+                        pass
+
                     bot.send_message(self.ID, f"Ты отписался от всех активностей", reply_markup=pupilkbd)
 
             con.close()
@@ -282,9 +285,16 @@ class MansDataBaseTG(MansDataBase):
                 self.VkId = int(message.text)
                 with con:
                     cur = con.cursor()
-                    sql = f"UPDATE MainTableV1 SET VkId = %s WHERE TgId = %s"
+                    sql = f"UPDATE MainTable SET VkId = %s WHERE TgId = %s"
                     sqlt = [self.VkId, self.ID]
                     cur.execute(sql, sqlt)
+                    con.commit()
+                    Acts = ActsDataBase().getallacts()
+                    if Acts:
+                        for i in len(Acts):
+                            cur.execute(f"UPDATE {Acts[i].replace(' ', '_')} SET VkId = %s WHERE TgId = %s", sqlt)
+                            con.commit()
+
                 con.close()
                 bot.send_message(self.ID, "Успешная смена ВК", reply_markup=pupilkbd)
             except ValueError:
@@ -348,6 +358,9 @@ class ActsDataBase:
             with con:
                 cur = con.cursor()
                 cur.execute(sql)
+                con.commit()
+                cur.execute(f"CREATE TABLE {name.replace(' ', '_')} (TgId int, VkId int)")
+                con.commit()
 
             con.close()
             bot.send_message(message.from_user.id, f"Активность «{name}» добавлена", reply_markup=adminkbd)
@@ -369,11 +382,11 @@ class ActsDataBase:
             with con:
                 cur = con.cursor()
                 cur.execute(sql, name)
+                con.commit()
+                cur.execute(f"DROP TABLE {name.replace(' ', '_')}")
             con.close()
 
             bot.send_message(message.from_user.id, f"Активность «{name}» удалена", reply_markup=adminkbd)
-
-            MansDataBaseTG().delActs(name)  # Удаляем активности из БД людей
 
         else:
             bot.send_message(message.from_user.id, f"Активности «{message.text}» не существует", reply_markup=adminkbd)
@@ -407,15 +420,26 @@ class SendMessage:
         con = pymysql.connect(**conargs)
         arr = []
         if act == "Всем":
-            sql = "SELECT TgId FROM MainTableV1"
+            pass
         else:
-            sql = f"SELECT TgId FROM MainTableV1 WHERE acts = '{act}'"
+            sql = f"SELECT TgId FROM {act.replace(' ', '_')}"
         with con:
             cur = con.cursor()
-            cur.execute(sql)
-            rows = cur.fetchall()
-            for row in rows:
-                arr.append(row[0])
+            if act != "Всем":
+                cur.execute(sql)
+                rows = cur.fetchall()
+                for row in rows:
+                    arr.append(row[0])
+            else:
+                Acts = ActsDataBase().getallacts()
+                if Acts:
+                    for i in len(Acts):
+                        cur.execute(f"SELECT TgId FROM {Acts[i].replace(' ', '_')}")
+                        rows = cur.fetchall()
+                        for row in rows:
+                            arr.append(row[0])
+                        con.commit()
+
         con.close()
         return self.nonone(arr)
 
@@ -433,7 +457,8 @@ class SendMessage:
 
             bot.register_next_step_handler(message, self.send2, act)
         else:
-            bot.send_message(message.from_user.id, text=f"Активности «{message.text}» не существует", reply_markup=adminkbd)
+            bot.send_message(message.from_user.id, text=f"Активности «{message.text}» не существует",
+                             reply_markup=adminkbd)
 
     def GetLastId(self):
         """
@@ -487,7 +512,6 @@ class CodeCheck:
 
     def __init__(self):
         self.MainDB = MansDataBaseTG()
-
 
     def code(self):
         """
