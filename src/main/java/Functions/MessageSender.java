@@ -24,7 +24,7 @@ public class MessageSender extends Thread {
             Sql = "SELECT VkId FROM MainTable";
         }
         else {
-            Sql = "SELECT VkId FROM MainTable WHERE acts = '" + act + "'";
+            Sql = "SELECT VkId FROM " + act.replace(' ', '_');
         }
         ArrayList<Integer> res = new ArrayList<>();
 

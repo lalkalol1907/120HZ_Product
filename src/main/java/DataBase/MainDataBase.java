@@ -25,7 +25,7 @@ public class MainDataBase {
             e.printStackTrace();
         }
 
-        String selectTableSQL = "SELECT VkId, Man from MainTableV1";
+        String selectTableSQL = "SELECT VkId from MainTable";
         assert conn != null;
         Statement statement = conn.createStatement();
         ResultSet rs = statement.executeQuery(selectTableSQL);
@@ -37,6 +37,15 @@ public class MainDataBase {
                 return true;
             }
         }
+        rs = statement.executeQuery("SELECT VkId FROM AdminTable");
+        while (rs.next()) {
+            int VkId = rs.getInt("VkId");
+            if (VkId == ID){
+                conn.close();
+                return true;
+            }
+        }
+
         conn.close();
         return false;
     }
@@ -51,7 +60,7 @@ public class MainDataBase {
             e.printStackTrace();
         }
 
-        String selectTableSQL = "SELECT VkId, acts from MainTableV1";
+        String selectTableSQL = "SELECT name from Acts";
         assert conn != null;
         Statement statement = conn.createStatement();
         ResultSet rs = statement.executeQuery(selectTableSQL);
@@ -59,15 +68,24 @@ public class MainDataBase {
         ArrayList<String> acts = new ArrayList<>();
 
         while (rs.next()) {
+            String act = rs.getString("name");
+            acts.add(act);
+        }
 
-            int VkId = rs.getInt("VkId");
-            if (VkId == ID) {
-                String act = rs.getString("acts");
-                if (!act.equals("") && !act.equals(" ") && !act.equals("0")) {
-                    acts.add(act);
+        for( String i : acts ){
+            selectTableSQL = "SELECT VkId FROM " + i;
+            rs = statement.executeQuery(selectTableSQL);
+
+            while (rs.next()){
+                ArrayList<Integer> temparr = new ArrayList<>();
+                int VkId = rs.getInt("VkId");
+
+                if (VkId == ID){
+                    acts.add(i);
                 }
             }
         }
+
         conn.close();
         return acts;
     }
@@ -84,8 +102,8 @@ public class MainDataBase {
         assert conn != null;
         Statement statement = conn.createStatement();
 
-        String InsertTableSQL = "INSERT INTO MainTableV1 VALUES"
-                + "('0', 'pupil','', " + ID + ")";
+        String InsertTableSQL = "INSERT INTO MainTable VALUES"
+                + "('0', " + ID + ")";
 
         statement.executeUpdate(InsertTableSQL);
         conn.close();
@@ -102,7 +120,7 @@ public class MainDataBase {
 
         assert conn != null;
         Statement statement = conn.createStatement();
-        String selectTableSQL = "SELECT VkId, TgId from MainTableV1";
+        String selectTableSQL = "SELECT VkId, TgId from MainTable";
         ResultSet rs = statement.executeQuery(selectTableSQL);
 
         while (rs.next()) {
@@ -124,30 +142,6 @@ public class MainDataBase {
         return 0;
     }
 
-    private static String typeidenty(int ID) throws SQLException {
-        Connection conn = null;
-        String Man = "pupil";
-
-        try{
-            conn = getConnection();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        String selectTableSQL = "SELECT VkId, Man from MainTableV1";
-        assert conn != null;
-        Statement statement = conn.createStatement();
-        ResultSet rs = statement.executeQuery(selectTableSQL);
-
-        while (rs.next()) {
-            int VkId = rs.getInt("VkId");
-            if (VkId == ID){
-                Man = rs.getString("Man");
-            }
-        }
-        conn.close();
-        return (Man);
-    }
 
     public static void subscribe(int ID, String act) throws SQLException{
         Connection conn = null;
@@ -160,8 +154,8 @@ public class MainDataBase {
 
         assert conn != null;
         Statement statement = conn.createStatement();
-        String InsertTableSQL = "INSERT INTO MainTableV1 VALUES" +
-                "('" + GetTGID(ID) + "', '"+ typeidenty(ID)+"', '" + act + "', '" + ID + "')";
+        String InsertTableSQL = "INSERT INTO " + act.replace(' ', '_') + " VALUES" +
+                "('" + GetTGID(ID) + "', '" + ID + "')";
 
         statement.executeUpdate(InsertTableSQL);
         conn.close();
@@ -180,7 +174,7 @@ public class MainDataBase {
 
         Statement statement = conn.createStatement();
 
-        String DeleteSql = "UPDATE MainTableV1 SET acts = '' WHERE VkId = '" + ID + "' AND acts = '" + act + "'";
+        String DeleteSql = "DELETE FROM" + act.replace(' ', '_') + " WHERE VkId = '" + ID + "'";
 
         statement.executeUpdate(DeleteSql);
         conn.close();

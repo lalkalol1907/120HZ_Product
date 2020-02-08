@@ -23,6 +23,7 @@ public class CodeDostavatel{
         String Sql = "SELECT * FROM CodeTable";
 
         Connection conn = null;
+
         try{
             conn = getConnection();
         } catch (Exception e){
@@ -33,13 +34,17 @@ public class CodeDostavatel{
         Statement statement = conn.createStatement();
         ResultSet rs = statement.executeQuery(Sql);
 
+        while (rs.next()) {
+            lastid = rs.getInt("ID");
+        }
+
         return lastid;
     }
 
     public static int coded() throws IOException, SQLException {
     int res = 0;
 
-    String Sql = "SELECT * FROM codetable";
+    String Sql = "SELECT * FROM CodeTable WHERE id = '" + GetLastId() +"'" ;
 
 
     Connection conn = null;
@@ -54,12 +59,10 @@ public class CodeDostavatel{
     ResultSet rs = statement.executeQuery(Sql);
 
     while (rs.next()){
-
-
-
+        res = rs.getInt("code");
     }
 
-
+    conn.close();
     return res;
     }
 }
