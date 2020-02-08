@@ -429,14 +429,15 @@ class SendMessage:
                 for row in rows:
                     arr.append(row[0])
             else:
-                Acts = ActsDataBase().getallacts()
-                if Acts:
-                    for i in range(0, len(Acts)):
-                        cur.execute(f"SELECT TgId FROM {Acts[i].replace(' ', '_')}")
-                        rows = cur.fetchall()
-                        for row in rows:
-                            arr.append(row[0])
-                        con.commit()
+                cur.execute(f"SELECT TgId FROM MainTable")
+                rows = cur.fetchall()
+                for row in rows:
+                    arr.append(row[0])
+
+                cur.execute("SELECT TgId FROM AdminTable")
+                rows = cur.fetchall()
+                for row in rows:
+                    arr.append(row[0])
 
         con.close()
         return self.nonone(arr)
@@ -449,7 +450,7 @@ class SendMessage:
         """
         if message.text == "Назад":
             bot.send_message(message.from_user.id, text=OthersTexts.gettext('back'), reply_markup=adminkbd)
-        elif message.text in ActsDataBase().getallacts():
+        elif (message.text in ActsDataBase().getallacts()) or (message.text == "Всем"):
             act = message.text
             bot.send_message(message.from_user.id, "Введите сообщение:", reply_markup=backkbd())
 
